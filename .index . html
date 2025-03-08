@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space AM - لعبة الفضاء</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #0b1a33;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #1e2a47;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+        .question {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: black;
+        }
+        .btn:hover {
+            background-color: #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Space AM - اختبار الفضاء 🚀</h1>
+        <p id="question" class="question">اضغط على "ابدأ" لبدء اللعبة!</p>
+        <button class="btn" onclick="startGame()">ابدأ</button>
+    </div>
+
+    <audio id="correctSound" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
+    <audio id="wrongSound" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
+
+    <script>
+        const questions = [
+            { question: "ما هو أكبر كوكب في المجموعة الشمسية؟", answer: "المشتري" },
+            { question: "ما هو اسم أقرب نجم إلى الأرض؟", answer: "الشمس" },
+            { question: "ما هو اسم الثقب الأسود الموجود في مركز مجرتنا؟", answer: "الرامي A*" },
+            { question: "كم عدد الكواكب في المجموعة الشمسية؟", answer: "ثمانية" },
+            { question: "ما هو اسم أول إنسان هبط على سطح القمر؟", answer: "نيل أرمسترونغ" },
+            { question: "ما هو اسم المجرة التي تنتمي إليها الأرض؟", answer: "درب التبانة" },
+            { question: "ما هو اسم أقرب مجرة لمجرة درب التبانة؟", answer: "أندروميدا" },
+            { question: "ما هو اسم أكبر نجم معروف؟", answer: "UY سكوتي" },
+            { question: "ما هو اسم القمر الذي يعتقد أنه يحتوي على محيط تحت سطحه الجليدي؟", answer: "يوروبا" },
+            { question: "ما هو أسرع كوكب يدور حول الشمس؟", answer: "عطارد" },
+            { question: "ما هو اسم أول قمر صناعي تم إطلاقه إلى الفضاء؟", answer: "سبوتنيك 1" },
+            { question: "أي كوكب يُعرف بالكوكب الأحمر؟", answer: "المريخ" },
+            { question: "ما هو اسم الطبقة الخارجية من الغلاف الجوي للشمس؟", answer: "الإكليل" },
+            { question: "كم يستغرق الضوء للوصول من الشمس إلى الأرض؟", answer: "ثماني دقائق" },
+            { question: "ما هو عدد الأقمار المعروفة لكوكب زحل؟", answer: "أكثر من 80 قمرًا" },
+            { question: "ما هو اسم أول إنسان خرج إلى الفضاء؟", answer: "يوري غاغارين" },
+            { question: "ما هو اسم أكبر مذنب تم اكتشافه؟", answer: "بيرناردينيلي-برنشتاين" },
+            { question: "ما اسم الظاهرة التي تسبب الشفق القطبي؟", answer: "الرياح الشمسية" },
+            { question: "ما هو العنصر الرئيسي الذي يتكون منه الشمس؟", answer: "الهيدروجين" },
+            { question: "ما هو الكوكب الذي لديه أطول يوم في المجموعة الشمسية؟", answer: "الزهرة" },
+            { question: "ما هو الكوكب الذي يمتلك أكبر حلقات في المجموعة الشمسية؟", answer: "زحل" },
+            { question: "ما هو الكوكب الذي يطلق عليه اسم التوأم الأرضي؟", answer: "الزهرة" },
+            { question: "ما هو أول مسبار فضائي وصل إلى بلوتو؟", answer: "نيو هورايزونز" },
+            { question: "ما هو اسم القمر الذي يتمتع بأكبر نشاط بركاني؟", answer: "آيو" },
+            { question: "ما هو الكوكب الذي لديه أقصر سنة؟", answer: "عطارد" },
+            { question: "ما هو اسم أكبر وادٍ في المجموعة الشمسية؟", answer: "وادي مارينير" },
+            { question: "ما هو اسم أبعد جسم فضائي تم تصويره عن قرب؟", answer: "ألتيمت ثولي" },
+            { question: "ما هو العنصر الذي يشكل معظم الغلاف الجوي لكوكب المريخ؟", answer: "ثاني أكسيد الكربون" }
+        ];
+
+        let index = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+
+        function startGame() {
+            index = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            askQuestion();
+        }
+
+        function askQuestion() {
+            if (index >= questions.length) {
+                alert(`🔥 انتهت اللعبة! \n✅ إجابات صحيحة: ${correctAnswers} \n❌ إجابات خاطئة: ${wrongAnswers}`);
+                document.getElementById("question").textContent = "انتهت اللعبة! اضغط على 'ابدأ' للعب مرة أخرى.";
+                return;
+            }
+            let userAnswer = prompt(questions[index].question);
+            if (userAnswer && userAnswer.trim() === questions[index].answer) {
+                correctAnswers++;
+                document.getElementById("correctSound").play();
+                alert("🎉 إجابة صحيحة! 🎉");
+            } else {
+                wrongAnswers++;
+                document.getElementById("wrongSound").play();
+                alert("❌ إجابة خاطئة! ❌");
+            }
+            index++;
+            askQuestion();
+        }
+    </script>
+</body>
+</html>
